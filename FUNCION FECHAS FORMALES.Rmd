@@ -1,0 +1,50 @@
+```{r}
+library(stringr)
+```
+
+```{r}
+v <- c("03 abril 2003", "03-04-2003", "03/04/2003", "3-4-03", "3/4/2003", "3/4/03", "3 Apr 2003", "3/Apr/2003", "03/April/03")
+```
+
+```{r}
+formal_year <- function(n){
+  for (a in 1:length(n)){
+    if (str_length(n[a]) == 2){
+      n[a] <- str_c("20", n[a])
+    }
+  }
+  return(n)
+}
+```
+
+
+```{r}
+month.nombre <- c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+
+formal_month <- function(n){
+  for (a in 1:length(n)){
+    if (n[a] %in%  month.abb){
+      n[a] <- match(n[a], month.abb)
+    }else if(n[a] %in% month.name){
+      n[a] <- match(n[a], month.name)
+    }else if(n[a] %in% month.nombre){
+      n[a] <- match(n[a], month.nombre)
+    }
+  }
+  return(n)
+}
+```
+
+```{r}
+formal_date <- function(date){
+  mtr <- str_match(date, pattern = "^(\\d+)\\W+(\\w+)\\W+(\\d+)$")
+  colnames(mtr)<- c("date", "day", "month", "year")
+  mtr[,"year"] <- formal_year(mtr[,"year"])
+  mtr[, "month"] <- formal_month(str_to_title(mtr[, "month"]))
+  mtr[,"month"] <- str_pad(mtr[,"month"], 2, pad="0")
+  mtr[,"day"] <- str_pad(mtr[,"day"], 2, pad="0")
+  formal <- str_c(mtr[,"year"], "-", mtr[,"month"], "-", mtr[,"day"])
+  return(formal)
+}
+```
+
